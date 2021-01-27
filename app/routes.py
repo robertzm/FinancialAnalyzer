@@ -1,7 +1,9 @@
 import os
 
-from flask import current_app as app, make_response, request, flash, url_for, send_from_directory
+from flask import current_app as app, make_response, request, flash, url_for, send_from_directory, render_template
 from werkzeug.utils import redirect, secure_filename
+
+from app.forms import UploadFileForm
 
 
 @app.route("/test", methods=["GET", "POST"])
@@ -14,6 +16,24 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    form = UploadFileForm()
+    if form.validate_on_submit():
+        card = form.card.data
+        year = form.year.data
+        month = form.month.data
+        owner = form.owner.data
+        file = form.file.data
+        if not file or file.filename == '':
+            return make_response("no file, error! ")
+        if file and allowed_file(file.filename):
+            filename = "_".join([card, year, month, owner, secure_filename(file.filename)])
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return make_response("saved files, correct")
+    return render_template('home/uploadfile.html', title='Register', form=form)
+
+
+@app.route('/test', methods=['GET', 'POST'])
+def upload_file_devo():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:

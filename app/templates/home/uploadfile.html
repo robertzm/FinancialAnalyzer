@@ -1,0 +1,39 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<div class="movie-register">
+    <div class="movie-register-title">
+        <h1>Login</h1>
+    </div>
+
+    <form action="" method="post" enctype="multipart/form-data" novalidate id="movie-register-form">
+        {{ form.hidden_tag() }}
+        <p>
+            Please select card type:<br>
+            {{ form.card.label }}
+            {{ form.card }}
+        </p>
+        <p>
+            Please select year:<br>
+            {{ form.year.label }}
+            {{ form.year }}
+        </p>
+        <p>
+            Please select month:<br>
+            {{ form.month.label }}
+            {{ form.month }}
+        </p>
+        <p>
+            Please select owner:<br>
+            {{ form.owner.label }}
+            {{ form.owner }}
+        </p>
+        <p>
+            Please select file:<br>
+            {{ form.file.label }}<br>
+            {{ form.file }}
+        </p>
+        <a>{{ form.submit() }}</a>
+    </form>
+</div>
+{% endblock %}
