@@ -28,6 +28,7 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://" + db_user + ":" + db_pwd + "@" + db_url + ":" + db_port + "/" + db_database
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
     app.config['SECRET_KEY'] = 'DontTellAnyone'
+    app.config['UPLOAD_FOLDER'] = '/Users/zibomeng/Workspace/python/FinancialAnalyzer/app/uploads'
 
     db.init_app(app)
 
