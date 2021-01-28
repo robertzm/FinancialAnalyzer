@@ -1,0 +1,29 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<div class="movie-register">
+    <div class="movie-register-title">
+        <h1>Add New Rule</h1>
+    </div>
+
+    <form action="" method="post" novalidate id="movie-register-form">
+        {{ form.hidden_tag() }}
+        <p>
+            Please enter reference words:<br>
+            {{ form.reference.label }}
+            {{ form.reference }}
+        </p>
+        <p>
+            Please select category:<br>
+            {{ form.category.label }}
+            {{ form.category }}
+        </p>
+        <p>
+            Please select fixed payment or not:<br>
+            {{ form.fixedPayment.label }}
+            {{ form.fixedPayment }}
+        </p>
+        <a>{{ form.submit() }}</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<div class="movie-register">
+    <div class="movie-register-title">
+        <h1>Transactions Records</h1>
+    </div>
+    <table>
+        <tr>
+            <th style="color:red">Date</th>
+            <th style="color:red">Owner</th>
+            <th style="color:red">Card</th>
+            <th style="color:red">Description</th>
+            <th style="color:red">Category</th>
+            <th style="color:red">Amount</th>
+            <th>AddRule</th>
+            <th>EditRecord</th>
+            <th>DeleteRecord</th>
+        </tr>
+        {% for r in records %}
+        <tr>
+            <th style="color:red">{{ r.date }}</th>
+            <th style="color:red">{{ r.owner }}</th>
+            <th style="color:red">{{ r.card }}</th>
+            <th style="color:red">{{ r.description }}</th>
+            <th style="color:red">{{ r.category }}</th>
+            {% if r.gain == True %}
+            <th style="color:red">{{ r.amount }}</th>
+            {% else %}
+            <th style="color:red">-{{ r.amount }}</th>
+            {% endif %}
+            <th><a href="/xyz">AddRule</a></th>
+            <th><a href="/xyz">EditRecord</a></th>
+            <th><a href="/xyz">DeleteRecord</a></th>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
