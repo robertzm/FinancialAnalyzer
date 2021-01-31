@@ -4,6 +4,7 @@ import uuid, shortuuid
 from flask import current_app as app, make_response, request, flash, url_for, send_from_directory, render_template
 from werkzeug.utils import redirect, secure_filename
 import csv
+from sqlalchemy import asc, desc
 
 from app import db
 from app.forms import UploadFileForm, AddRuleForm
@@ -33,7 +34,8 @@ def upload_file():
                 file.save(path)
                 parseAndSaveTransctions(card, owner, path)
             except ValueError as ve:
-                return make_response("File parsing error, please check your uploading file type or card type: " + str(ve))
+                return make_response(
+                    "File parsing error, please check your uploading file type or card type: " + str(ve))
             except Exception as e:
                 return make_response("Uploading filed failed, as: " + str(e))
             return redirect(url_for('list_records'))
@@ -53,10 +55,16 @@ def add_rule():
         return redirect(url_for('list_records'))
     return render_template('home/addrule.html', form=form)
 
+
 @app.route('/transactions', methods=['GET', 'POST'])
 def list_records():
-    records = TransRecord.query.all()
+    baseQuery = TransRecord.query
+    category = request.args.get('category')
+    if category:
+        baseQuery = baseQuery.filter(TransRecord.category == category).order_by(desc('date'))
+    records = baseQuery.all()
     return render_template('home/transactions.html', records=records)
+
 
 @app.route('/refresh', methods=['GET', 'POST'])
 def refresh_records():
@@ -85,6 +93,16 @@ def uploaded_file(uuid):
         return make_response("no record, error!")
 
 
+@app.route('/castfood/<uuid>')
+def cast_food(uuid):
+    record = TransRecord.query.filter(TransRecord.uuid == uuid).first()
+    if record:
+        record.category = "Restaurant"
+        record.fixedPayment = False
+        db.session.commit()
+        return redirect(url_for('list_records', category="Unknown"))
+
+
 def parseAndSaveTransctions(card, owner, filepath):
     rule = {}
     rules = Rule.query.all()
@@ -103,7 +121,7 @@ def parseAndSaveTransctions(card, owner, filepath):
         elif "Citi" in card:
             parseHelper(filepath, rule, owner, card, 'Description', 'Date')
     except Exception as e:
-        raise(ValueError(e))
+        raise (ValueError(e))
 
 
 def parseHelper(filepath, rule, owner, card, descriptionName, dateName):

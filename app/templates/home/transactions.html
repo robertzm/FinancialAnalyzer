@@ -8,6 +8,7 @@
     <a href="/upload">UploadTransaction</a>
     <a href="/addrule">AddRule</a>
     <a href="/refresh">Refresh</a>
+    <a href="/transactions?category=Unknown">Unknown</a>
     <table>
         <tr>
             <th style="color:red">Date</th>
@@ -16,9 +17,10 @@
             <th style="color:red">Description</th>
             <th style="color:red">Category</th>
             <th style="color:red">Amount</th>
-            <th>Edit</th>
-            <th>Delete</th>
-            <th>Download</th>
+            <th style="color:red">Edit</th>
+            <th style="color:red">Delete</th>
+            <th style="color:red">Download</th>
+            <th style="color:red">Cast Food</th>
         </tr>
         {% for r in records %}
         <tr>
@@ -35,6 +37,7 @@
             <th><a href="/xyz">Edit</a></th>
             <th><a href="/xyz">Delete</a></th>
             <th><a href="/uploads/{{ r.uuid }}">Download</a></th>
+            <th><a href="/castfood/{{ r.uuid }}">CastFood</a></th>
         </tr>
         {% endfor %}
     </table>
