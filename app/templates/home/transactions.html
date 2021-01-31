@@ -5,6 +5,9 @@
     <div class="movie-register-title">
         <h1>Transactions Records</h1>
     </div>
+    <a href="/upload">UploadTransaction</a>
+    <a href="/addrule">AddRule</a>
+    <a href="/refresh">Refresh</a>
     <table>
         <tr>
             <th style="color:red">Date</th>
@@ -13,7 +16,6 @@
             <th style="color:red">Description</th>
             <th style="color:red">Category</th>
             <th style="color:red">Amount</th>
-            <th>AddRule</th>
             <th>EditRecord</th>
             <th>DeleteRecord</th>
         </tr>
@@ -29,9 +31,9 @@
             {% else %}
             <th style="color:red">-{{ r.amount }}</th>
             {% endif %}
-            <th><a href="/xyz">AddRule</a></th>
-            <th><a href="/xyz">EditRecord</a></th>
-            <th><a href="/xyz">DeleteRecord</a></th>
+            <th><a href="/xyz">Edit</a></th>
+            <th><a href="/xyz">Delete</a></th>
+            <th><a href="/uploads/{{ r.uuid }}">Download</a></th>
         </tr>
         {% endfor %}
     </table>

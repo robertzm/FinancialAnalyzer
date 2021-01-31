@@ -12,6 +12,7 @@ class TransRecord(db.Model):
     fixedPayment = db.Column(db.Boolean, default=False)
     gain = db.Column(db.Boolean, default=False)
     amount = db.Column(db.Float, default=0, nullable=False)
+    uploadfile = db.Column(db.String(128), nullable=False)
 
     def __repr__(self):
         return "<TransRecord {}".format(self.description + "-" + self.date)
