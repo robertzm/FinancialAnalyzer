@@ -5,25 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scal=1.0">
     <meta http-equiv="X-UA-Compatible" content="id=edge">
     <title>MyMovieDevoWeb</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/nucleo-icons.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <!-- Nucleo Icons -->
+    <link href="../static/css/nucleo-icons.css" rel="stylesheet"/>
+    <!-- CSS Files -->
+    <link href="../static/css/style.css" rel="stylesheet"/>
 </head>
-<body>
-<nav>
-    <!-- TODO : Navigator -->
-</nav>
+<body class="">
+<div class="wrapper">
+    <div class="sidebar">
+        <!--
+          Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red"
+      -->
+        <div class="sidebar-wrapper">
+            <ul class="nav">
+                <li>
+                    <a href="/transactions?">
+                        <i class="tim-icons icon-chart-pie-36"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
 
-<!-- content -->
-<div class="container" style="margin-top:76px">
-    {% block content %}
-    {% endblock %}
-</div>
-<script src="{{ url_for('static', filename='index.js') }}"></script>
+                <li>
+                    <a href="/upload">
+                        <i class="tim-icons icon-cloud-upload-94"></i>
+                        <p>Upload</p>
+                    </a>
+                </li>
 
-<footer>
-    <div class="footer">
-            I don't know what to write here. :((((
+                <li>
+                    <a href="/addrule">
+                        <i class="tim-icons icon-simple-add"></i>
+                        <p>Add Rule</p>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/transactions?category=Unknown">
+                        <i class="tim-icons icon-alert-circle-exc"></i>
+                        <p>Unknown</p>
+                    </a>
+                </li>
+
+                <li class="active-pro">
+                    <a href="/refresh">
+                        <i class="tim-icons icon-refresh-02"></i>
+                        <p>Refresh</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
-</footer>
+
+    <div class="main-panel">
+        <nav class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+            <!-- TODO : Navigator -->
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle d-inline">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand" href="javascript:void(0)">Expenses</a>
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navigation">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="search-bar input-group">
+                            <button class="btn btn-link" id="search-button" data-toggle="modal"
+                                    data-target="#searchModal"><i class="tim-icons icon-zoom-split"></i>
+                                <span class="d-lg-none d-md-block">Search</span>
+                            </button>
+                        </li>
+                        <li class="separator d-lg-none"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="modal modal-search fade" id="searchModal" tabindex="-1" role="dialog"
+                 aria-labelledby="searchModal" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="SEARCH">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="tim-icons icon-simple-remove"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- content -->
+        <div class="content">
+
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <footer>
+            <div class="footer">
+                I don't know what to write here. :((((
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!--   Core JS Files   -->
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+<script src="../static/js/core/jquery.min.js"></script>
+<script src="../static/js/core/popper.min.js"></script>
+<script src="../static/js/core/bootstrap.min.js"></script>
+<script src="../static/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+<!-- Chart JS -->
+<script src="../static/js/plugins/chartjs.min.js"></script>
+<!--  Notifications Plugin    -->
+<script src="../static/js/plugins/bootstrap-notify.js"></script>
+<!-- Control Center for Black Dashboard: parallax effects, scripts for the example pages etc -->
+
 </body>
 </html>
