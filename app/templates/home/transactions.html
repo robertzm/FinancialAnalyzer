@@ -21,10 +21,8 @@
                             <th>Description</th>
                             <th>Category</th>
                             <th>Amount</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                            <th>Download</th>
-                            <th>Cast Food</th>
+                            <th>Actions</th>
+
                         </tr>
                         </thead>
                         {% for r in records %}
@@ -39,10 +37,10 @@
                             {% else %}
                             <th>-{{ r.amount }}</th>
                             {% endif %}
-                            <th><a href="/xyz">Edit</a></th>
-                            <th><a href="/xyz">Delete</a></th>
-                            <th><a href="/uploads/{{ r.uuid }}">Download</a></th>
-                            <th><a href="/castfood/{{ r.uuid }}">CastFood</a></th>
+                            <th><a href="/xyz" data-toggle="tooltip" data-placement="top" title="Edit"><i class="tim-icons icon-pencil"></i></a>
+                                <a href="/xyz" data-toggle="tooltip" data-placement="top" title="Delete"><i class="tim-icons icon-trash-simple"></i></a>
+                                <a href="/uploads/{{ r.uuid }}" data-toggle="tooltip" data-placement="top" title="Download"><i class="tim-icons icon-cloud-download-93"></i></a>
+                                <a href="/castfood/{{ r.uuid }}" data-toggle="tooltip" data-placement="top" title="Cast Food"><i class="tim-icons icon-chart-pie-36"></i></a></th>
                         </tr>
                         {% endfor %}
                     </table>
