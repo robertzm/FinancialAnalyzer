@@ -1,45 +1,56 @@
 {% extends "home/home.html" %}
 
 {% block content %}
-<div class="movie-register">
-    <div class="movie-register-title">
-        <h1>Transactions Records</h1>
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card  card-plain">
+            <div class="card-header">
+                <h4 class="card-title"> Transactions</h4>
+                <p class="category"> Here is a list of all transactions</p>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table tablesorter " id="">
+                        <thead class=" text-primary">
+                        <tr>
+                            <th>Date</th>
+                            <th>Owner</th>
+                            <th>Card</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                            <th>Download</th>
+                            <th>Cast Food</th>
+                        </tr>
+                        </thead>
+                        {% for r in records %}
+                        <tr>
+                            <th>{{ r.date }}</th>
+                            <th>{{ r.owner }}</th>
+                            <th>{{ r.card }}</th>
+                            <th>{{ r.description }}</th>
+                            <th>{{ r.category }}</th>
+                            {% if r.gain == True %}
+                            <th>{{ r.amount }}</th>
+                            {% else %}
+                            <th>-{{ r.amount }}</th>
+                            {% endif %}
+                            <th><a href="/xyz">Edit</a></th>
+                            <th><a href="/xyz">Delete</a></th>
+                            <th><a href="/uploads/{{ r.uuid }}">Download</a></th>
+                            <th><a href="/castfood/{{ r.uuid }}">CastFood</a></th>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <a href="/upload">UploadTransaction</a>
-    <a href="/addrule">AddRule</a>
-    <a href="/refresh">Refresh</a>
-    <a href="/transactions?category=Unknown">Unknown</a>
-    <table>
-        <tr>
-            <th style="color:red">Date</th>
-            <th style="color:red">Owner</th>
-            <th style="color:red">Card</th>
-            <th style="color:red">Description</th>
-            <th style="color:red">Category</th>
-            <th style="color:red">Amount</th>
-            <th style="color:red">Edit</th>
-            <th style="color:red">Delete</th>
-            <th style="color:red">Download</th>
-            <th style="color:red">Cast Food</th>
-        </tr>
-        {% for r in records %}
-        <tr>
-            <th style="color:red">{{ r.date }}</th>
-            <th style="color:red">{{ r.owner }}</th>
-            <th style="color:red">{{ r.card }}</th>
-            <th style="color:red">{{ r.description }}</th>
-            <th style="color:red">{{ r.category }}</th>
-            {% if r.gain == True %}
-            <th style="color:red">{{ r.amount }}</th>
-            {% else %}
-            <th style="color:red">-{{ r.amount }}</th>
-            {% endif %}
-            <th><a href="/xyz">Edit</a></th>
-            <th><a href="/xyz">Delete</a></th>
-            <th><a href="/uploads/{{ r.uuid }}">Download</a></th>
-            <th><a href="/castfood/{{ r.uuid }}">CastFood</a></th>
-        </tr>
-        {% endfor %}
-    </table>
 </div>
+
 {% endblock %}

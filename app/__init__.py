@@ -8,10 +8,10 @@ config.read("app/FinancialAnalyzer.ini")
 
 if len(sys.argv) > 1 and sys.argv[1] == "PROD":
     app_url = config['PROD'].get('url', "192.168.0.14")
-    app_port = config['PROD'].get('port', '2000')
+    app_port = config['PROD'].get('port', '5000')
 else:
     app_url = config['LOCAL'].get('url', "127.0.0.1")
-    app_port = config['LOCAL'].get('port', '2000')
+    app_port = config['LOCAL'].get('port', '5000')
 
 db_config = config['MYSQL_DB']
 db_user = db_config.get('user', 'root')
