@@ -103,6 +103,18 @@ def cast_food(uuid):
         return redirect(url_for('list_records', category="Unknown"))
 
 
+@app.route("/test")
+def home():
+    """Landing page."""
+    return render_template(
+        "index.jinja2",
+        title="Plotly Dash Flask Tutorial",
+        description="Embed Plotly Dash into your Flask applications.",
+        template="home-template",
+        body="This is a homepage served with Flask.",
+    )
+
+
 def parseAndSaveTransctions(card, owner, filepath):
     rule = {}
     rules = Rule.query.all()
