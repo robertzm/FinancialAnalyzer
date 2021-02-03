@@ -9,6 +9,7 @@ from sqlalchemy import asc, desc
 from app import db
 from app.forms import UploadFileForm, AddRuleForm
 from app.models import TransRecord, Rule
+from app.plotlyflask.dashboard import dash_url
 
 
 def allowed_file(filename):
@@ -63,7 +64,12 @@ def list_records():
     if category:
         baseQuery = baseQuery.filter(TransRecord.category == category).order_by(desc('date'))
     records = baseQuery.all()
-    return render_template('home/transactions.html', records=records)
+    return render_template('home/transactions.html', records=records, dash_url=dash_url)
+
+
+@app.route('/dash', methods=['GET', 'POST'])
+def dashboard():
+    return render_template('home/dash.html', dash_url=dash_url)
 
 
 @app.route('/refresh', methods=['GET', 'POST'])
