@@ -73,14 +73,14 @@ def edit_records():
         for uid in request.form.getlist('uuid'):
             r = TransRecord.query.filter(TransRecord.uuid == uid).first()
             r.category = request.form.getlist('category')[0]
-            r.fixedPayment = True if bool(request.form.getlist('fixedpay')[0]) else False
+            r.fixedPayment = True if bool(request.form.getlist('fixedpay')[0] == 'True') else False
             db.session.commit()
         return redirect(url_for('edit_records'))
     baseQuery = TransRecord.query
     category = request.args.get('Filter')
     if category:
-        baseQuery = baseQuery.filter(TransRecord.category == category).order_by(asc('description'))
-    records = baseQuery.all()
+        baseQuery = baseQuery.filter(TransRecord.category == category)
+    records = baseQuery.order_by(asc('description')).all()
     return render_template('home/editrecords.html', records=records)
 
 
