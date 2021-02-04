@@ -64,7 +64,24 @@ def list_records():
     if category:
         baseQuery = baseQuery.filter(TransRecord.category == category).order_by(desc('date'))
     records = baseQuery.all()
-    return render_template('home/transactions.html', records=records, dash_url=dash_url)
+    return render_template('home/transactions.html', records=records)
+
+
+@app.route('/editrecords', methods=['GET', 'POST'])
+def edit_records():
+    if request.method == 'POST':
+        for uid in request.form.getlist('uuid'):
+            r = TransRecord.query.filter(TransRecord.uuid == uid).first()
+            r.category = request.form.getlist('category')[0]
+            r.fixedPayment = True if bool(request.form.getlist('fixedpay')[0]) else False
+            db.session.commit()
+        return redirect(url_for('edit_records'))
+    baseQuery = TransRecord.query
+    category = request.args.get('Filter')
+    if category:
+        baseQuery = baseQuery.filter(TransRecord.category == category).order_by(asc('description'))
+    records = baseQuery.all()
+    return render_template('home/editrecords.html', records=records)
 
 
 @app.route('/dash', methods=['GET', 'POST'])

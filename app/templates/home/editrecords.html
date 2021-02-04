@@ -1,0 +1,106 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card  card-plain">
+            <div class="card-header">
+                <h4 class="card-title"> Transactions</h4>
+                <p class="category"> Here is a list of all transactions</p>
+                <p> FilterBy: </p>
+                <a href="/editrecords?Filter=Restaurant">Restaurant</a>
+                <a href="/editrecords?Filter=Grocery">Grocery</a>
+                <a href="/editrecords?Filter=Utilities">Utilities</a>
+                <a href="/editrecords?Filter=Clothes">Clothes</a>
+                <a href="/editrecords?Filter=HouseImprovement">HouseImprovement</a>
+                <a href="/editrecords?Filter=Vacation">Vacation</a>
+                <a href="/editrecords?Filter=Gas">Gas</a>
+                <a href="/editrecords?Filter=Cars">Cars</a>
+                <a href="/editrecords?Filter=Play">Play</a>
+                <a href="/editrecords?Filter=Medicals">Medicals</a>
+                <a href="/editrecords?Filter=White">White</a>
+                <a href="/editrecords?Filter=Parents">Parents</a>
+                <a href="/editrecords?Filter=Shits">Shits</a>
+                <a href="/editrecords?Filter=Income">Income</a>
+                <a href="/editrecords?Filter=CardPay">CardPay</a>
+                <a href="/editrecords?Filter=Unknown">Unknown</a>
+            </div>
+
+            <div class="card-body">
+                <form method="post">
+                    <div>
+                        <label for="category">Category:</label>
+                        <select id="category" name="category">
+                            <option value="Restaurant">Restaurant</option>
+                            <option value="Grocery">Grocery</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Clothes">Clothes</option>
+                            <option value="HouseImprovement">HouseImprovement</option>
+                            <option value="Vacation">Vacation</option>
+                            <option value="Gas">Gas</option>
+                            <option value="Cars">Cars</option>
+                            <option value="Play">Play</option>
+                            <option value="Medicals">Medicals</option>
+                            <option value="White">White</option>
+                            <option value="Parents">Parents</option>
+                            <option value="Shits">Shits</option>
+                            <option value="Income">Income</option>
+                            <option value="CardPay">CardPay</option>
+                            <option value="Unknown">Unknown</option>
+                        </select>
+                        <label for="fixedpay">FixedPayment:</label>
+                        <select id="fixedpay" name="fixedpay">
+                            <option value="False">False</option>
+                            <option value="True">True</option>
+                        </select>
+                        <input type="submit" value="Update">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table tablesorter " id="">
+                            <thead class=" text-primary">
+                            <tr>
+                                <th>Checking</th>
+                                <th>Date</th>
+                                <th>Owner</th>
+                                <th>Card</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+
+                            </tr>
+                            </thead>
+                            {% for r in records %}
+                            <tr>
+                                <th><input type="checkbox" name="uuid" value={{ r.uuid }}></th>
+                                <th>{{ r.date }}</th>
+                                <th>{{ r.owner }}</th>
+                                <th>{{ r.card }}</th>
+                                <th>{{ r.description }}</th>
+                                <th>{{ r.category }}</th>
+                                {% if r.gain == True %}
+                                <th>{{ r.amount }}</th>
+                                {% else %}
+                                <th>-{{ r.amount }}</th>
+                                {% endif %}
+                                <th><a href="/xyz" data-toggle="tooltip" data-placement="top" title="Edit"><i
+                                        class="tim-icons icon-pencil"></i></a>
+                                    <a href="/xyz" data-toggle="tooltip" data-placement="top" title="Delete"><i
+                                            class="tim-icons icon-trash-simple"></i></a>
+                                    <a href="/uploads/{{ r.uuid }}" data-toggle="tooltip" data-placement="top"
+                                       title="Download"><i class="tim-icons icon-cloud-download-93"></i></a>
+                                    <a href="/castfood/{{ r.uuid }}" data-toggle="tooltip" data-placement="top"
+                                       title="Cast Food"><i class="tim-icons icon-chart-pie-36"></i></a></th>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
