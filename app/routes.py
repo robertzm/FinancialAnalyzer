@@ -2,14 +2,14 @@ import os
 
 import uuid, shortuuid
 from flask import current_app as app, make_response, request, flash, url_for, send_from_directory, render_template
-from werkzeug.utils import redirect, secure_filename
-import csv
+from werkzeug.utils import redirect
 from sqlalchemy import asc, desc
+import pandas as pd
+import math
 
 from app import db
 from app.forms import UploadFileForm, AddRuleForm
 from app.models import TransRecord, Rule
-from app.plotlyflask.dashboard import dash_url
 
 
 def allowed_file(filename):
@@ -86,6 +86,7 @@ def edit_records():
 
 @app.route('/dash', methods=['GET', 'POST'])
 def dashboard():
+    from app.plotlyflask.dashboard import dash_url
     return render_template('home/dash.html', dash_url=dash_url)
 
 
@@ -116,6 +117,7 @@ def uploaded_file(uuid):
         return make_response("no record, error!")
 
 
+# to be deprecated
 @app.route('/castfood/<uuid>')
 def cast_food(uuid):
     record = TransRecord.query.filter(TransRecord.uuid == uuid).first()
@@ -126,76 +128,78 @@ def cast_food(uuid):
         return redirect(url_for('list_records', category="Unknown"))
 
 
-@app.route("/test")
-def home():
-    """Landing page."""
-    return render_template(
-        "index.jinja2",
-        title="Plotly Dash Flask Tutorial",
-        description="Embed Plotly Dash into your Flask applications.",
-        template="home-template",
-        body="This is a homepage served with Flask.",
-    )
-
-
 def parseAndSaveTransctions(card, owner, filepath):
     rule = {}
     rules = Rule.query.all()
     for r in rules:
         rule[r.reference] = {'Category': r.category, 'FixedPayment': r.fixedPayment}
 
+    # df = pd.read_csv(filepath, parse_dates=['Transaction Date', 'Posting Date', 'Post Date', 'Date', 'Trans. Date'])
+
     try:
         if "Chase" in card:
-            parseHelper(filepath, rule, owner, card, 'Description', 'Transaction Date')
+            if "Checking" in card:
+                # todo
+                a = 1
+            else:
+                df = pd.read_csv(filepath, parse_dates=['Transaction Date', 'Post Date'])
+                df['Date'] = df['Transaction Date'].dt.date
+                df.drop(columns=['Transaction Date', 'Post Date', 'Category', 'Type', 'Memo'], inplace=True)
         elif "Boa" in card:
-            parseHelper(filepath, rule, owner, card, 'Payee', 'Posted Date')
+            df = pd.read_csv(filepath, parse_dates=['Posted Date'])
+            df['Date'] = df['Posted Date'].dt.date
+            df['Description'] = df['Payee']
+            df.drop(columns=['Posted Date', 'Reference Number', 'Payee', 'Address'], inplace=True)
         elif card == "Discover":
-            parseHelper(filepath, rule, owner, card, 'Description', 'Trans. Date')
+            df = pd.read_csv(filepath, parse_dates=['Post Date', 'Trans. Date'])
+            df['Date'] = df['Trans. Date'].dt.date
+            df.drop(columns=['Trans. Date', 'Post Date', 'Category'], inplace=True)
+            df['Amount'] = -1 * df['Amount']
         elif "AmEx" in card:
-            parseHelper(filepath, rule, owner, card, 'Description', 'Date')
+            df = pd.read_csv(filepath, parse_dates=['Date'])
+            df['Date'] = df['Date'].dt.date
+            df.drop(columns=['Receipt', 'Card Member', 'Account #'], inplace=True)
+            df['Amount'] = -1 * df['Amount']
         elif "Citi" in card:
-            parseHelper(filepath, rule, owner, card, 'Description', 'Date')
+            df = pd.read_csv(filepath, parse_dates=['Date'])
+            df['Date'] = df['Date'].dt.date
+            for i in range(len(df['Credit'])):
+                if math.isnan(df['Credit'].get(i)):
+                    df['Credit'][i] = 0
+            for i in range(len(df['Debit'])):
+                if math.isnan(df['Debit'].get(i)):
+                    df['Debit'][i] = 0
+            df['Amount'] = -1 * (df['Credit'] + df['Debit'])
+            df.drop(columns=['Status', 'Credit', 'Debit'], inplace=True)
+
+        df = df.reindex(columns=['Date', 'Description', 'Amount'])
+        parseHelper(df, rule, owner, card, filepath)
     except Exception as e:
         raise (ValueError(e))
 
 
-def parseHelper(filepath, rule, owner, card, descriptionName, dateName):
-    with open(filepath, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            timeslot = row[dateName][-4:] + "/" + row[dateName][:2]
-            uid = shortuuid.encode(uuid.uuid1())
-            category = "Unknown"
-            fixed = False
-            for key, value in rule.items():
-                if (str(key)).upper() in (row[descriptionName]).upper():
-                    category = value['Category']
-                    fixed = value['FixedPayment']
-                    break
-            if 'Amount' in row.keys():
-                amount = float(row['Amount'])
-                if "Chase" in card or "Boa" in card:
-                    gain = True if amount > 0 else False
-                else:
-                    gain = True if amount < 0 else False
-            else:
-                if row['Debit']:
-                    amount = float(row['Debit'])
-                    gain = False
-                else:
-                    amount = float(row['Credit'])
-                    gain = True
-            record = TransRecord(uuid=uid,
-                                 timeslot=timeslot,
-                                 owner=owner,
-                                 card=card,
-                                 date=row[dateName],
-                                 description=row[descriptionName],
-                                 category=category,
-                                 fixedPayment=fixed,
-                                 gain=gain,
-                                 amount=abs(amount),
-                                 uploadfile=os.path.basename(filepath))
-            db.session.add(record)
-            db.session.commit()
+def parseHelper(df, rule, owner, card, filepath):
+    for row in df.values:
+        timeslot = row[0].strftime("%Y/%m")  # row['Date'][-4:] + "/" + row['Date'][:2]
+        uid = shortuuid.encode(uuid.uuid1())
+        category = "Unknown"
+        fixed = False
+        for key, value in rule.items():
+            if (str(key)).upper() in (row[1]).upper():
+                category = value['Category']
+                fixed = value['FixedPayment']
+                break
+        record = TransRecord(uuid=uid,
+                             timeslot=timeslot,
+                             owner=owner,
+                             card=card,
+                             date=row[0].strftime("%m/%d/%Y"),
+                             description=row[1],
+                             category=category,
+                             fixedPayment=fixed,
+                             gain=True if row[2] > 0 else False,
+                             amount=abs(row[2]),
+                             uploadfile=os.path.basename(filepath))
+        db.session.add(record)
+        db.session.commit()
     return None

@@ -35,11 +35,12 @@ def create_app():
 
     with app.app_context():
         from . import routes  # Import routes
+        db.create_all()  # Create database tables for our data models
+
         # Import Dash application
         from .plotlyflask.dashboard import init_dashboard
 
         app = init_dashboard(app)
 
-        db.create_all()  # Create database tables for our data models
 
         return app
