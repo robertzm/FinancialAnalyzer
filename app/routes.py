@@ -148,10 +148,9 @@ def parseAndSaveTransctions(card, owner, filepath):
                 df.drop(columns=['Transaction Date', 'Post Date', 'Category', 'Type', 'Memo'], inplace=True)
         elif "Boa" in card:
             if "Checking" in card:
-                df = pd.read_csv(filepath, parse_dates=['Posted Date'])
-                df['Date'] = df['Posted Date'].dt.date
-                df['Description'] = df['Payee']
-                df.drop(columns=['Posted Date', 'Reference Number', 'Payee', 'Address'], inplace=True)
+                df = pd.read_csv(filepath, parse_dates=['Date'])
+                df['Date'] = df['Date'].dt.date
+                df.drop(columns=['Running Bal.'], inplace=True)
             else:
                 df = pd.read_csv(filepath, parse_dates=['Posted Date'])
                 df['Date'] = df['Posted Date'].dt.date
