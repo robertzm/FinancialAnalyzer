@@ -127,6 +127,13 @@ def cast_food(uuid):
         db.session.commit()
         return redirect(url_for('list_records', category="Unknown"))
 
+@app.route('/migrate', methods=['GET', 'POST'])
+def migrate():
+    records = TransRecord.query.all()
+    for record in records:
+        record.description = ' '.join(record.description.replace('\t', ' ').split())
+        db.session.commit()
+    return make_response("done")
 
 def parseAndSaveTransctions(card, owner, filepath):
     rule = {}
@@ -195,12 +202,13 @@ def parseHelper(df, rule, owner, card, filepath):
                 category = value['Category']
                 fixed = value['FixedPayment']
                 break
+        description = ' '.join(record.description.replace('\t', ' ').split())
         record = TransRecord(uuid=uid,
                              timeslot=timeslot,
                              owner=owner,
                              card=card,
                              date=row[0].strftime("%m/%d/%Y"),
-                             description=row[1] if len(row[1]) <= 100 else row[1][:100],
+                             description=description if len(description) <= 100 else description[:100],
                              category=category,
                              fixedPayment=fixed,
                              gain=True if row[2] > 0 else False,
