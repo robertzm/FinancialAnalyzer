@@ -139,17 +139,24 @@ def parseAndSaveTransctions(card, owner, filepath):
     try:
         if "Chase" in card:
             if "Checking" in card:
-                # todo
-                a = 1
+                df = pd.read_csv(filepath, parse_dates=['Posting Date'])
+                df['Date'] = df['Posting Date'].dt.date
+                df.drop(columns=['Details', 'Posting Date', 'Type', 'Balance', 'Check or Slip #', 'Empty'], inplace=True)
             else:
                 df = pd.read_csv(filepath, parse_dates=['Transaction Date', 'Post Date'])
                 df['Date'] = df['Transaction Date'].dt.date
                 df.drop(columns=['Transaction Date', 'Post Date', 'Category', 'Type', 'Memo'], inplace=True)
         elif "Boa" in card:
-            df = pd.read_csv(filepath, parse_dates=['Posted Date'])
-            df['Date'] = df['Posted Date'].dt.date
-            df['Description'] = df['Payee']
-            df.drop(columns=['Posted Date', 'Reference Number', 'Payee', 'Address'], inplace=True)
+            if "Checking" in card:
+                df = pd.read_csv(filepath, parse_dates=['Posted Date'])
+                df['Date'] = df['Posted Date'].dt.date
+                df['Description'] = df['Payee']
+                df.drop(columns=['Posted Date', 'Reference Number', 'Payee', 'Address'], inplace=True)
+            else:
+                df = pd.read_csv(filepath, parse_dates=['Posted Date'])
+                df['Date'] = df['Posted Date'].dt.date
+                df['Description'] = df['Payee']
+                df.drop(columns=['Posted Date', 'Reference Number', 'Payee', 'Address'], inplace=True)
         elif card == "Discover":
             df = pd.read_csv(filepath, parse_dates=['Post Date', 'Trans. Date'])
             df['Date'] = df['Trans. Date'].dt.date
@@ -194,7 +201,7 @@ def parseHelper(df, rule, owner, card, filepath):
                              owner=owner,
                              card=card,
                              date=row[0].strftime("%m/%d/%Y"),
-                             description=row[1],
+                             description=row[1] if len(row[1]) <= 100 else row[1][:100],
                              category=category,
                              fixedPayment=fixed,
                              gain=True if row[2] > 0 else False,
