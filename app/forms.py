@@ -43,6 +43,7 @@ class AddRuleForm(Form):
                                                 ("Parents", "Parents"),
                                                 ("Shits", "Shits"),
                                                 ("Income", "Income"),
+                                                ("Invest", "Invest"),
                                                 ("CardPay", "CardPay")])
     fixedPayment = SelectField('month', choices=[("False", "False"), ("True", "True")])
     submit = SubmitField('submit')
