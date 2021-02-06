@@ -11,7 +11,7 @@ dash_url = "/dash/app1/"
 df = create_dataframe()
 categories = list(set(df.category))
 date = list(sorted(set(df.timeslot)))
-amountAvg = [df[df['category'] == i]['amount'].sum() / len(date) for i in categories]
+# amountAvg = [df[df['category'] == i]['amount'].sum() / len(date) for i in categories]
 
 def init_dashboard(server):
     """Create a Plotly Dash dashboard."""
@@ -44,14 +44,16 @@ def init_dashboard(server):
 
 def init_callbacks(dash_app):
     @dash_app.callback(Output('monthly-cost-graph', 'figure'), [Input('month-slider', 'value')])
-    def make_figure(value):
+    def make_category_bar_figure(value):
+        notshow = ['CardPay', 'Invest', 'Unknown']
         tmp = df[df['timeslot'] == date[value]]
-        amount = [tmp[tmp['category'] == i]['amount'].sum() for i in categories]
+        amount = [tmp[tmp['category'] == i]['amount'].sum() for i in categories if i not in notshow]
+        amountAvg = [df[df['category'] == i]['amount'].sum() / len(date) for i in categories if i not in notshow]
 
         figure = {
             "data": [
-                {'x': categories, 'y': amount, 'type': 'bar', 'name': 'MonthlyCost'},
-                {'x': categories, 'y': amountAvg, 'type': 'bar', 'name': 'AvgCost'}
+                {'x': [x for x in categories if x not in notshow], 'y': amount, 'type': 'bar', 'name': 'MonthlyCost'},
+                {'x': [x for x in categories if x not in notshow], 'y': amountAvg, 'type': 'bar', 'name': 'AvgCost'}
             ],
             "layout": {
                 "title": "{}/{}".format(date[value].year, date[value].month) + " Monthly Cost vs. Avg Monthly Cost",
@@ -62,11 +64,12 @@ def init_callbacks(dash_app):
         return figure
 
     @dash_app.callback(Output('monthly-cost-pct-graph', 'figure'), [Input('month-slider', 'value')])
-    def make_figure(value):
+    def make_category_pie_figure(value):
+        notshow = ['CardPay', 'Invest', 'Unknown']
         tmp = df[df['timeslot'] == date[value]]
-        amount = [tmp[tmp['category'] == i]['amount'].sum() for i in categories]
+        amount = [tmp[tmp['category'] == i]['amount'].sum() for i in categories if i not in notshow]
 
-        fig = go.Figure(data=[go.Pie(labels=categories, values=amount, hole=.4)],
+        fig = go.Figure(data=[go.Pie(labels=[x for x in categories if x not in notshow], values=amount, hole=.4)],
                         layout={
                             'title': "{}/{}".format(date[value].year, date[value].month) + " Monthly Cost Percentage",
                             'height': 500,
@@ -80,5 +83,5 @@ def init_callbacks(dash_app):
         df = create_dataframe()
         categories = list(set(df.category))
         date = list(sorted(set(df.timeslot)))
-        amountAvg = [df[df['category'] == i]['amount'].sum() / len(date) for i in categories]
+        # amountAvg = [df[df['category'] == i]['amount'].sum() / len(date) for i in categories]
         return {i: '{}/{}'.format(date[i].year, date[i].month) for i in range(len(date))}, len(date) - 1
